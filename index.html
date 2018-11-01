@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Meron Ba?</title>
+<link rel="stylesheet" type="text/css" href="index.css">
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-2428804785991953",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+<body>
+
+<h2>Meron ba bagyo</h2>
+<script>
+
+</script>
+
+<div id="content">Wala</div>
+<div id="sub-content"></div>
+
+<script>
+        var xhttp = new XMLHttpRequest()
+        var response = null
+        text = JSON.stringify('{ "city" : "manila"}'),
+        obj = JSON.parse(text);
+        xhttp.open("POST", "http://104.199.133.169:443");
+        xhttp.setRequestHeader("Content-type", "application/json");
+        xhttp.setRequestHeader("Accept", "application/json");
+        xhttp.send(obj);
+        xhttp.onreadystatechange = function () {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            response = JSON.parse(xhttp.response);
+        	if(response.weather.includes("Rain"))
+{
+        	    document.getElementById("content").innerHTML = "Meron";
+}
+        	else
+{
+        	    document.getElementById("content").innerHTML = "Wala";
+		    document.getElementById("sub-content").innerHTML = response.weather + " lang";
+}
+            }
+        }
+        //window.alert(response)
+</script>
+</body>
+</html>
