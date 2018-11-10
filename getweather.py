@@ -8,6 +8,7 @@ import tornado.ioloop
 import tornado.web
 import pyowm
 import json
+import googlemaps
 
 
 class MainHandler(tornado.web.RequestHandler):
@@ -33,28 +34,37 @@ class MainHandler(tornado.web.RequestHandler):
 
     def post(self):
         json_request = tornado.escape.json_decode(self.request.body)
-        city = json_request['city']
-        weather = get_weather(city)
+        latitude = json_request['latitude']
+        longitude = json_request['longitude']
+        weather, city = get_weather(latitude, longitude)
         json_response = {
             "success": True,
-            "weather": weather
+            "weather": weather,
+            "city": city
         }
         self.write(json.dumps(json_response))
         self.finish()
         
 
-def get_weather(city):
+def get_weather(latitude, longitude):
     OWM_API_KEY = '38ee6f2c3acb748ce95d5ab5cca6b25f'
     owm = pyowm.OWM(OWM_API_KEY)  # You MUST provide a valid API key
     
     # Search for current weather
+    city = get_city(latitude, longitude)
     location = city + ', philippines'
     observation = owm.weather_at_place(location.lower())
     w = observation.get_weather()
     weather = w.get_status()
     
-    return weather
+    return weather, city
 
+def get_city(latitude, longitude):
+    api_key = "AIzaSyCgQTuzNIRJEsyEzR0dGGU6uPBtmAKHZxg"
+    gmaps = googlemaps.Client(key=api_key)
+    reverse_geocode_result = gmaps.reverse_geocode((latitude, longitude))
+    city = reverse_geocode_result[0]['address_components'][2]['long_name']
+    return city
 
 def make_app():
     return tornado.web.Application([
