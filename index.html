@@ -22,29 +22,46 @@
 <div id="sub-content"></div>
 
 <script>
-        var xhttp = new XMLHttpRequest()
-        var response = null
-        text = JSON.stringify('{ "city" : "manila"}'),
-        obj = JSON.parse(text);
-        xhttp.open("POST", "http://104.199.133.169:443");
-        xhttp.setRequestHeader("Content-type", "application/json");
-        xhttp.setRequestHeader("Accept", "application/json");
-        xhttp.send(obj);
-        xhttp.onreadystatechange = function () {
-        if (xhttp.readyState == 4 && xhttp.status == 200) {
-            response = JSON.parse(xhttp.response);
-        	if(response.weather.includes("Rain"))
-{
-        	    document.getElementById("content").innerHTML = "Meron";
+window.onload = function() {
+  getLocation();
+};
+
+function getLocation() {
+  navigator.geolocation.watchPosition(function(position) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  },
+  function (error) { 
+    if (error.code == error.PERMISSION_DENIED)
+    {
+        //Code if geolocation is denied
+    }
+  });
 }
-        	else
-{
-        	    document.getElementById("content").innerHTML = "Wala";
-		    document.getElementById("sub-content").innerHTML = response.weather + " lang";
+
+function showPosition(position) {
+  var latitude = position.coords.latitude,
+  longitude =  position.coords.longitude,
+  xhttp = new XMLHttpRequest(),
+  response = null;
+  text = JSON.stringify('{"latitude" : "'+latitude+'", "longitude": "'+longitude+'"}'),
+  obj = JSON.parse(text);
+  xhttp.open("POST", "http://104.199.133.169:443");
+  xhttp.setRequestHeader("Content-type", "application/json");
+  xhttp.setRequestHeader("Accept", "application/json");
+  xhttp.send(obj);
+  xhttp.onreadystatechange = function () {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      response = JSON.parse(xhttp.response);
+      if(response.weather.includes("Rain")){
+        document.getElementById("content").innerHTML = "Meron";
+      } 
+      else{
+        document.getElementById("content").innerHTML = "Wala";
+        document.getElementById("sub-content").innerHTML = response.weather + " lang";
+      }
+    }
+  }
 }
-            }
-        }
-        //window.alert(response)
 </script>
 </body>
 </html>
